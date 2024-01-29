@@ -26,7 +26,7 @@ public class ApiTest extends TestBase {
                                      .when()
                                     .get(users + "/2")
                                     .then()
-                                    .spec(singleUserResponseSpec)
+                                    .spec(responseCode200)
                                     .extract().as(SingleUserResponseModel.class)
         );
 
@@ -48,7 +48,7 @@ public class ApiTest extends TestBase {
                 .when()
                 .get(unknown)
                 .then()
-                .spec(resourceListResponseSpec)
+                .spec(responseCode200)
                 .extract().as(ListDataResponse.class)
 
        );
@@ -79,7 +79,7 @@ public class ApiTest extends TestBase {
                     .post(register)
 
                     .then()
-                    .spec(registerResponseSpec)
+                    .spec(responseCode200)
                     .extract().as(SuccessfulRegisterResponseModel.class)
         );
 
@@ -102,7 +102,7 @@ public class ApiTest extends TestBase {
                     .when()
                     .post(register)
                     .then()
-                    .spec(failedRegisterResponseSpec)
+                    .spec(responseCode400)
                    .extract().as(UnsuccessfulRegisterResponseModel.class)
         );
         step("Checking Error message", ()->
@@ -123,7 +123,7 @@ public class ApiTest extends TestBase {
                     .when()
                     .post(users)
                     .then()
-                    .spec(createUserResponseSpec)
+                    .spec(responseCode201)
                     .extract().as(NewUserResponseModel.class)
         );
         step("Validating new user creation", ()-> {
@@ -140,7 +140,7 @@ public class ApiTest extends TestBase {
         given()
                 .get(unknown + "/23")
                 .then()
-                .spec(error404Spec);
+                .spec(responseCode404);
     }
 
 }

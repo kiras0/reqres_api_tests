@@ -16,29 +16,22 @@ public class RegisterSpecs {
             .contentType(JSON)
             .log().uri();
 
-    public static ResponseSpecification registerResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(200)
-            .log(ALL)
-            .build();
 
-    public static ResponseSpecification singleUserResponseSpec = new ResponseSpecBuilder()
+    public static ResponseSpecification responseCode200 = new ResponseSpecBuilder()
             .expectStatusCode(200)
             .log(ALL)
             .build();
-    public static ResponseSpecification resourceListResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(200)
-            .log(ALL)
-
-            .build();
-    public static ResponseSpecification failedRegisterResponseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(400)
-            .log(ALL)
-            .build();
-    public static ResponseSpecification createUserResponseSpec = new ResponseSpecBuilder()
+    public static ResponseSpecification responseCode201 = new ResponseSpecBuilder()
             .expectStatusCode(201)
             .log(ALL)
             .build();
-    public static ResponseSpecification error404Spec = new ResponseSpecBuilder()
+
+    public static ResponseSpecification responseCode400 = new ResponseSpecBuilder()
+            .expectStatusCode(400)
+            .log(ALL)
+            .build();
+
+    public static ResponseSpecification responseCode404 = new ResponseSpecBuilder()
             .expectStatusCode(404)
             .log(STATUS)
             .build();
