@@ -1,4 +1,6 @@
 import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Story;
 import models.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -12,13 +14,15 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static specs.RegisterSpecs.*;
 
-@Feature("Using regres.in API testing GET and POST methods")
-@DisplayName("API Test on Regres")
+@Owner("Kiras0")
+@Feature("Using reqres.in API testing GET and POST methods")
+@DisplayName("API Test on Reqres")
 @Tag("api")
 public class ApiTest extends TestBase {
 
-    @Test
     @DisplayName("GET a correct request for single user")
+    @Story("Testing of successful request for single user using method GET")
+    @Test
     void newApiTest() {
         SingleUserResponseModel data =
                 step("Requesting single user", () ->
@@ -34,8 +38,9 @@ public class ApiTest extends TestBase {
         );
     }
 
-    @Test
     @DisplayName("Test for data from resource list")
+    @Story("Testing of successful request of user list using method GET")
+    @Test
     public void listOfResourcesTest() {
         ListDataResponse list =
             step("Check ID ", () ->
@@ -58,8 +63,9 @@ public class ApiTest extends TestBase {
         });
     }
 
-    @Test
     @DisplayName("POST successful user registration")
+    @Story("Testing of successful registration using method GET")
+    @Test
     void successfulRegistration() {
         RegisterBodyModel userRegister = new RegisterBodyModel();
         userRegister.setEmail(email);
@@ -80,8 +86,9 @@ public class ApiTest extends TestBase {
         });
     }
 
-    @Test
     @DisplayName("POST unsuccessful user registration")
+    @Story("Testing of unsuccessful registration with wrong credentials using method POST")
+    @Test
     void unsuccessfulRegistration() {
         RegisterBodyModel userRegister = new RegisterBodyModel();
         userRegister.setEmail(email);
@@ -99,8 +106,10 @@ public class ApiTest extends TestBase {
             assertEquals(error_mpass, response.getError())
         );
     }
-    @Test
+
     @DisplayName("Create new user request")
+    @Story("Testing of successful creating new user info using method GET")
+    @Test
     void createUserRequest() {
         NewUserBodyModel userParam = new NewUserBodyModel();
         userParam.setName(name);
@@ -123,8 +132,9 @@ public class ApiTest extends TestBase {
         });
     }
 
+    @DisplayName("Testing unknown request for error 404")
+    @Story("Testing of unsuccessful data request with wrong information using method GET")
     @Test
-    @DisplayName("Testing random request for error 404")
     void api404Test() {
         given()
                 .get(unknown + "/23")
