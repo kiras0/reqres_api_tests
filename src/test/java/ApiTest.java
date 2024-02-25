@@ -1,13 +1,18 @@
-import io.restassured.http.ContentType;
+import io.qameta.allure.Feature;
+import models.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
+import static data.TestData.*;
+import static data.TestPath.*;
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static specs.RegisterSpecs.*;
 
+@Feature("Using regres.in API testing GET and POST methods")
 @DisplayName("API Test on Regres")
 @Tag("api")
 public class ApiTest extends TestBase {
@@ -15,102 +20,115 @@ public class ApiTest extends TestBase {
     @Test
     @DisplayName("GET a correct request for single user")
     void newApiTest() {
-        given()
-                .log().uri()
-                .get("/users/2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("data.id", is(2))
-                .body("data.first_name", is("Janet"));
-
+        SingleUserResponseModel data =
+                step("Requesting single user", () ->
+                             given(requestSpec)
+                                     .when()
+                                    .get(users + "/2")
+                                    .then()
+                                    .spec(responseCode200)
+                                    .extract().as(SingleUserResponseModel.class)
+        );
+        step("Check ID ", () ->
+            assertEquals(2, data.getData().getId())
+        );
     }
 
     @Test
     @DisplayName("Test for data from resource list")
     public void listOfResourcesTest() {
-
-        given()
-                .log().uri()
-                .contentType(JSON)
+        ListDataResponse list =
+            step("Check ID ", () ->
+                    given(requestSpec)
                 .when()
-                .get("/unknown")
+                .get(unknown)
                 .then()
-                .log().status()
-                .log().body()
-                .body("total",is(12))
-                .body("data.id[1]", equalTo(2))
-                .body("data.name[1]", equalTo("fuchsia rose"))
-                .assertThat().contentType(ContentType.JSON);
+                .spec(responseCode200)
+                .extract().as(ListDataResponse.class)
+
+       );
+       step("Check number of users ", () ->
+               assertThat(list.getTotal()).isEqualTo(userNum)
+
+       );
+        step("Check details of user No.2 ", () -> {
+            assertEquals(id, list.getData()[1].getId());
+            assertEquals(user2, list.getData()[1].getName());
+
+        });
     }
+
     @Test
     @DisplayName("POST successful user registration")
-    void successulRegistration() {
-        String userRegister = "{\n" +
-                "    \"email\": \"eve.holt@reqres.in\",\n" +
-                "    \"password\": \"pistol\"\n" +
-                "}";
-        given()
-                .body(userRegister)
-                .contentType(JSON)
-                .log().uri()
-                .when()
-                .post("/register")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("id", is(4))
-                .body("token", is("QpwL5tke4Pnpja7X4"));
-
+    void successfulRegistration() {
+        RegisterBodyModel userRegister = new RegisterBodyModel();
+        userRegister.setEmail(email);
+        userRegister.setPassword(password);
+        SuccessfulRegisterResponseModel response =
+                step("Registration of new user", ()->
+                        given(requestSpec)
+                    .body(userRegister)
+                    .when()
+                    .post(register)
+                    .then()
+                    .spec(responseCode200)
+                    .extract().as(SuccessfulRegisterResponseModel.class)
+        );
+        step("Check ID and Token", ()-> {
+            assertEquals(token, response.getToken());
+            assertEquals(4, response.getId());
+        });
     }
+
     @Test
     @DisplayName("POST unsuccessful user registration")
-    void unsuccessulRegistration() {
-        String serRegister = "{\n" + "    \"email\": \"eve.holt@reqres.in\"\n" + "}";
-                given()
-                .body(serRegister)
-                .contentType(JSON)
-                .log().uri()
-                .when()
-                .post("/register")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(400)
-                .body("error", is("Missing password"));
+    void unsuccessfulRegistration() {
+        RegisterBodyModel userRegister = new RegisterBodyModel();
+        userRegister.setEmail(email);
+        UnsuccessfulRegisterResponseModel response =
+        step("Posting only email no password", ()->
+                given(requestSpec)
+                    .body(userRegister)
+                    .when()
+                    .post(register)
+                    .then()
+                    .spec(responseCode400)
+                   .extract().as(UnsuccessfulRegisterResponseModel.class)
+        );
+        step("Checking Error message", ()->
+            assertEquals(error_mpass, response.getError())
+        );
     }
     @Test
     @DisplayName("Create new user request")
     void createUserRequest() {
-        String serRegister = "{\n" +
-                "    \"name\": \"morpheus\",\n" +
-                "    \"job\": \"leader\"\n" +
-                "}";
-        given()
-                .body(serRegister)
-                .contentType(JSON)
-                .log().uri()
-                .when()
-                .post("/users")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(201)
-                .body("name", is("morpheus"))
-                .body("createdAt", notNullValue());
+        NewUserBodyModel userParam = new NewUserBodyModel();
+        userParam.setName(name);
+        userParam.setJob(job);
+
+        NewUserResponseModel response =
+        step("Creating user with new params", ()->
+             given(requestSpec)
+                    .body(userParam)
+                    .when()
+                    .post(users)
+                    .then()
+                    .spec(responseCode201)
+                    .extract().as(NewUserResponseModel.class)
+        );
+        step("Validating new user creation", ()-> {
+            assertThat(response.getName()).isEqualTo(name);
+            assertThat(response.getCreatedAt()).isNotNull();
+
+        });
     }
 
-
     @Test
-    @DisplayName("404")
+    @DisplayName("Testing random request for error 404")
     void api404Test() {
         given()
-                .log().uri()
-                .get("/unknown/23")
+                .get(unknown + "/23")
                 .then()
-                .log().status()
-                .statusCode(404);
+                .spec(responseCode404);
     }
 }
