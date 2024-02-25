@@ -1,8 +1,8 @@
+import io.qameta.allure.Feature;
 import models.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 
 import static data.TestData.*;
 import static data.TestPath.*;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static specs.RegisterSpecs.*;
 
-
+@Feature("Using regres.in API testing GET and POST methods")
 @DisplayName("API Test on Regres")
 @Tag("api")
 public class ApiTest extends TestBase {
@@ -29,20 +29,15 @@ public class ApiTest extends TestBase {
                                     .spec(responseCode200)
                                     .extract().as(SingleUserResponseModel.class)
         );
-
-
-
         step("Check ID ", () ->
             assertEquals(2, data.getData().getId())
         );
-
-
     }
-
 
     @Test
     @DisplayName("Test for data from resource list")
-    public void listOfResourcesTest() { ListDataResponse list =
+    public void listOfResourcesTest() {
+        ListDataResponse list =
             step("Check ID ", () ->
                     given(requestSpec)
                 .when()
@@ -66,7 +61,6 @@ public class ApiTest extends TestBase {
     @Test
     @DisplayName("POST successful user registration")
     void successfulRegistration() {
-
         RegisterBodyModel userRegister = new RegisterBodyModel();
         userRegister.setEmail(email);
         userRegister.setPassword(password);
@@ -74,25 +68,21 @@ public class ApiTest extends TestBase {
                 step("Registration of new user", ()->
                         given(requestSpec)
                     .body(userRegister)
-
                     .when()
                     .post(register)
-
                     .then()
                     .spec(responseCode200)
                     .extract().as(SuccessfulRegisterResponseModel.class)
         );
-
         step("Check ID and Token", ()-> {
             assertEquals(token, response.getToken());
             assertEquals(4, response.getId());
         });
-
     }
+
     @Test
     @DisplayName("POST unsuccessful user registration")
     void unsuccessfulRegistration() {
-
         RegisterBodyModel userRegister = new RegisterBodyModel();
         userRegister.setEmail(email);
         UnsuccessfulRegisterResponseModel response =
@@ -133,14 +123,12 @@ public class ApiTest extends TestBase {
         });
     }
 
-
     @Test
-    @DisplayName("404")
+    @DisplayName("Testing random request for error 404")
     void api404Test() {
         given()
                 .get(unknown + "/23")
                 .then()
                 .spec(responseCode404);
     }
-
 }
