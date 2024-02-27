@@ -132,6 +132,17 @@ public class ApiTest extends TestBase {
         });
     }
 
+    @Test
+    @DisplayName("Testing for successful DELETE method for a user")
+    void deleteUserTest() {
+        step("Sending request to delete a user", () ->
+                given(requestSpec)
+                        .when()
+                        .delete(users + "/2")
+                        .then()
+                        .spec(responseCode204));
+    }
+
     @DisplayName("Testing unknown request for error 404")
     @Story("Testing of unsuccessful data request with wrong information using method GET")
     @Test

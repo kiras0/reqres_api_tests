@@ -25,6 +25,10 @@ public class RegisterSpecs {
             .expectStatusCode(201)
             .log(ALL)
             .build();
+    public static ResponseSpecification responseCode204 = new ResponseSpecBuilder()
+            .expectStatusCode(204)
+            .log(ALL)
+            .build();
 
     public static ResponseSpecification responseCode400 = new ResponseSpecBuilder()
             .expectStatusCode(400)
