@@ -36,7 +36,7 @@
 # Example of API automation test
 
 - [x] <code>GET</code> single user data list
-- [x] Create new user request
+- [x] Testing <code>DELETE</code> a user
 - [x] Unsuccessful user registration with <code>POST</code>
 - [x] Method <code>GET</code> for resource list
 - [x] Testing for <code>Status Codes</code>
