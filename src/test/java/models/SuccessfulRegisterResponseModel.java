@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class SuccessfulRegisterResponseModel {
-    int id;
-    String token;
+    private int id;
+    private String token;
 }

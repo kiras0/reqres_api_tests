@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SingleUserDataResponse {
-    int id;
+    private int id;
 }

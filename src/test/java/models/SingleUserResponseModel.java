@@ -8,5 +8,4 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SingleUserResponseModel {
     private SingleUserDataResponse data;
-
 }
